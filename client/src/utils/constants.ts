@@ -1,0 +1,1 @@
+export const FALLBACK_IMAGE = "https://placehold.co/1200x400.png?text=Event+Image";
