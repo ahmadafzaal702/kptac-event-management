@@ -1,24 +1,38 @@
 "use client";
 
-// react/next imports
 import { useState } from "react";
 import Image from "next/image";
-
-// types & utils
 import { InterfaceEventImage } from "@/types/event";
 import { FALLBACK_IMAGE } from "@/utils/constants";
 
-const EventImage = ({ imgURL, title }: InterfaceEventImage) => {
+// EventImage Component
+const EventImage = ({ imgURL, title, variant = "page" }: InterfaceEventImage) => {
   const [imgSrc, setImgSrc] = useState(imgURL);
 
+  const containerClasses = variant === "page"
+    ? "w-full h-[300px] relative"
+    : "w-full aspect-video relative";
+
+  const imageClasses = variant === "page"
+    ? "object-cover"
+    : "object-cover rounded-t-lg";
+
   return (
-    <Image
-      src={imgSrc}
-      alt={title}
-      fill={true}
-      onError={() => setImgSrc(FALLBACK_IMAGE)}
-      className={`object-cover rounded-t-lg`}
-    />
+    <div className={containerClasses}>
+      <Image
+        src={imgSrc}
+        alt={title}
+        fill
+        onError={() => setImgSrc(FALLBACK_IMAGE)}
+        className={imageClasses}
+        sizes={
+          variant === "page"
+            ? "100vw"
+            : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
+        }
+        priority={variant === "page"}
+      />
+    </div>
   );
 };
 

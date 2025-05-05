@@ -1,9 +1,6 @@
 "use client";
 
-// react/next imports
 import { useRouter } from "next/navigation";
-
-// ui
 import {
   Card,
   CardHeader,
@@ -12,15 +9,12 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EventStatus, EventTiming, EventImage } from "@/components/events";
-
-// types & utils
 import { InterfaceEvent } from "@/types/event";
 
-// EventCard FC
+// EventCard Component
 const EventCard = ({ event }: { event: InterfaceEvent }) => {
   const router = useRouter();
 
-  // EventCard FC return
   return (
     <>
       <Card
@@ -29,15 +23,14 @@ const EventCard = ({ event }: { event: InterfaceEvent }) => {
       >
         <CardHeader className="p-0">
           <div className="relative h-48">
-            <EventImage imgURL={event.image_url} title={event.title} />
-          </div>
-
-          {/* event status with countdown */}
-          <div className="px-4 pt-2">
-            <EventStatus event={event} />
+            <EventImage imgURL={event.image_url} title={event.title} variant='card' />
           </div>
         </CardHeader>
         <CardContent className="px-4">
+          {/* event status with countdown */}
+          <div className="pb-2">
+            <EventStatus event={event} />
+          </div>
           <h3 className="font-semibold text-lg">{event.title}</h3>
           <p className="text-sm text-muted-foreground mt-1">{event.location}</p>
           <Badge variant="outline" className="mt-2">

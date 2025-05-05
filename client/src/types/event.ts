@@ -8,23 +8,22 @@ export interface InterfaceEvent {
     expires_at: string,
     image_url: string
 }
-
 export type EventStatType = 'Upcoming' | 'Ongoing' | 'Expired';
 export type EventBadgeType = 'secondary' | 'default' | 'destructive';
-
 export interface EventCounterInterface {
     days: number,
     hours: number,
     minutes: number,
 }
-
 export interface EventTimingInterface {
     startDate: string,
     expireDate: string,
 }
-
 export interface InterfaceEventImage {
     imgURL: string,
     title: string,
-    height?: string,
+    variant?: string,
+}
+export interface EventDetailPageProps {
+    params: Promise<{ id: string }>;
 }

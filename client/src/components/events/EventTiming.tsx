@@ -1,7 +1,7 @@
 import React from "react";
-
 import { EventTimingInterface } from "@/types/event";
 
+// EventTiming Component
 const EventTiming = ({ startDate, expireDate }: EventTimingInterface) => {
   const eventStartDate = new Date(startDate);
   const eventEndDate = new Date(expireDate);

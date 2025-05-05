@@ -1,44 +1,34 @@
 import { notFound } from "next/navigation";
-import { EventTiming, EventStatus } from "@/components/events";
-
-// types & utils
-import { InterfaceEvent } from "@/types/event";
+import { EventTiming, EventStatus, EventImage } from "@/components/events";
+import { InterfaceEvent, EventDetailPageProps } from "@/types/event";
 import { getAllEvents } from "@/utils/utils";
+import { API_URL, VALIDATE_DURATION } from '@/utils/constants';
 
-// Fetch single event
+// Fetch single event by ID
 async function getEvent(id: number): Promise<InterfaceEvent | undefined> {
-  const events = await getAllEvents(
-    "https://68148b33225ff1af16292eee.mockapi.io/api/v1/events",
-    60
-  );
+  const events = await getAllEvents(API_URL, VALIDATE_DURATION);
   return events.find((event) => event.id === id);
 }
 
 // Generate static paths at build time
 export async function generateStaticParams() {
-  const events = await getAllEvents(
-    "https://68148b33225ff1af16292eee.mockapi.io/api/v1/events",
-    60
-  );
+  const events = await getAllEvents(API_URL, VALIDATE_DURATION);
   return events.map((event) => ({ id: event.id.toString() }));
 }
 
-interface IParams {
-  params: Promise<{ id: string }>;
-}
-
-const EventDetailPage = async ({ params }: IParams) => {
+// Event Detail Page Component
+const EventDetailPage = async ({ params }: EventDetailPageProps) => {
   const { id } = await params;
   const event = await getEvent(Number(id));
 
   if (!event) {
-    notFound(); // Will show the not-found page
+    notFound();
   }
 
   return (
     <>
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+      <main className="w-full min-h-screen overflow-hidden px-12 py-12">
+        <div className="mx-auto">
           {/* Event Header */}
           <div className="mb-8">
             <div className="flex justify-between items-start">
@@ -58,12 +48,7 @@ const EventDetailPage = async ({ params }: IParams) => {
 
           {/* Event Image */}
           <div className="mb-8 rounded-lg overflow-hidden">
-            {/* <EventImage imgURL={event.image_url} title={event.title} /> */}
-            <img
-              src={event.image_url}
-              alt={event.title}
-              className="w-full h-auto object-cover"
-            />
+            <EventImage imgURL={event.image_url} title={event.title} variant='page' />
           </div>
 
           {/* Event Details */}

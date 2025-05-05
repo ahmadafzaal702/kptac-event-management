@@ -1,12 +1,7 @@
 "use client";
 
-// react/next imports
 import { useState, useEffect } from "react";
-
-// ui
 import { Badge } from "../ui/badge";
-
-// types & utils
 import {
   InterfaceEvent,
   EventStatType,
@@ -15,6 +10,7 @@ import {
 } from "@/types/event";
 import { getTimeLeft } from "@/utils/utils";
 
+// EventStatus Component
 const EventStatus = ({ event }: { event: InterfaceEvent }) => {
   const [eventStatus, setEventStatus] = useState<EventStatType>("Upcoming");
   const [badgeVariant, setBadgeVariant] = useState<EventBadgeType>("default");
