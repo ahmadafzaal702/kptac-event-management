@@ -15,6 +15,21 @@ export const getAllEvents = async (url: string, validateTime: number): Promise<I
   }
 };
 
+export const getEventsById = async (url: string, validateTime: number, id: number): Promise<InterfaceEvent[]> => {
+  try {
+    const res = await fetch(`${url}?id=${id}`,
+      {
+        next: { revalidate: validateTime },
+      }
+    );
+
+    return await res.json();
+  } catch (error) {
+    console.log("Failed to fetch events:", error);
+    return [];
+  }
+};
+
 export const getTimeLeft = (targetDate: string) => {
   const currentDate = new Date();
   const target = new Date(targetDate);

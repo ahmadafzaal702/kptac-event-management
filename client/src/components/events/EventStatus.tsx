@@ -51,7 +51,7 @@ const EventStatus = ({ event }: { event: InterfaceEvent }) => {
       <div className="flex items-center justify-between">
         <Badge variant={badgeVariant}>{eventStatus}</Badge>
 
-        <div className="text-sm">
+        <div>
           {eventStatus === "Upcoming" && eventTimeLeft && (
             <Badge variant={badgeVariant} className="text-blue-600">
               Starts in: {eventTimeLeft.days}d {eventTimeLeft.hours}h{" "}

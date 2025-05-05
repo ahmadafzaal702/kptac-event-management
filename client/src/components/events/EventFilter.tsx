@@ -1,82 +1,121 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from '@/components/ui/select';
-
-import { Button } from '@/components/ui/button';
-import { RotateCcw } from 'lucide-react';
-import { EventCard } from '@/components/events';
-import { InterfaceEvent } from '@/types/event';
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { RotateCcw } from "lucide-react";
+import { EventCard } from "@/components/events";
+import { NotFound } from "../shared";
+import { InterfaceEvent } from "@/types/event";
 
 // EventFilter Component
 const EventFilter = ({ allEvents }: { allEvents: InterfaceEvent[] }) => {
   const [events, setEvents] = useState(allEvents);
   const [filters, setFilters] = useState({
-    title: '',
-    location: '',
-    type: '',
+    title: "",
+    location: "",
+    type: "",
+    status: "",
   });
 
-  const uniqueTitles = Array.from(new Set(allEvents.map(event => event.title)));
-  const uniqueLocations = Array.from(new Set(allEvents.map(event => event.location)));
-  const uniqueTypes = Array.from(new Set(allEvents.map(event => event.type)));
+  const uniqueLocations = Array.from(
+    new Set(allEvents.map((event) => event.location))
+  );
+  const uniqueTypes = Array.from(new Set(allEvents.map((event) => event.type)));
 
   useEffect(() => {
-    const filteredEvents = allEvents.filter(event => {
-      const titleMatch = !filters.title || event.title === filters.title;
-      const locationMatch = !filters.location || event.location === filters.location;
+    const currentDate = new Date();
+
+    const filteredEvents = allEvents.filter((event) => {
+      // Title filter
+      const titleMatch =
+        !filters.title ||
+        event.title.toLowerCase().includes(filters.title.toLowerCase());
+
+      // Location filter
+      const locationMatch =
+        !filters.location || event.location === filters.location;
+
+      // Type filter
       const typeMatch = !filters.type || event.type === filters.type;
-      return titleMatch && locationMatch && typeMatch;
+
+      // Status filter
+      const startDate = new Date(event.starts_at);
+      const expireDate = new Date(event.expires_at);
+
+      let statusMatch = true;
+      if (filters.status) {
+        if (filters.status === "upcoming") {
+          statusMatch = currentDate < startDate;
+        } else if (filters.status === "ongoing") {
+          statusMatch = currentDate >= startDate && currentDate <= expireDate;
+        } else if (filters.status === "expired") {
+          statusMatch = currentDate > expireDate;
+        }
+      }
+
+      return titleMatch && locationMatch && typeMatch && statusMatch;
     });
 
     setEvents(filteredEvents);
   }, [filters, allEvents]);
 
   const handleFilterChange = (key: keyof typeof filters, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleReset = () => {
-    setFilters({ title: '', location: '', type: '' });
+    setFilters({
+      title: "",
+      location: "",
+      type: "",
+      status: "",
+    });
   };
 
   return (
     <>
       <div className="w-full flex flex-wrap items-center justify-center gap-4 mb-6">
-
         {/* Title Filter */}
-        <Select
+        <Input
+          placeholder="Search by title..."
           value={filters.title}
-          onValueChange={(value) => handleFilterChange('title', value)}
+          onChange={(e) => handleFilterChange("title", e.target.value)}
+          className="w-[300px]"
+        />
+
+        {/* Status Filter */}
+        <Select
+          value={filters.status}
+          onValueChange={(value) => handleFilterChange("status", value)}
         >
           <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Title" />
+            <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            {uniqueTitles.map(title => (
-              <SelectItem key={title} value={title}>
-                {title}
-              </SelectItem>
-            ))}
+            <SelectItem value="upcoming">Upcoming</SelectItem>
+            <SelectItem value="ongoing">Ongoing</SelectItem>
+            <SelectItem value="expired">Expired</SelectItem>
           </SelectContent>
         </Select>
 
         {/* Location Filter */}
         <Select
           value={filters.location}
-          onValueChange={(value) => handleFilterChange('location', value)}
+          onValueChange={(value) => handleFilterChange("location", value)}
         >
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Location" />
           </SelectTrigger>
           <SelectContent>
-            {uniqueLocations.map(location => (
+            {uniqueLocations.map((location) => (
               <SelectItem key={location} value={location}>
                 {location}
               </SelectItem>
@@ -87,13 +126,13 @@ const EventFilter = ({ allEvents }: { allEvents: InterfaceEvent[] }) => {
         {/* Type Filter */}
         <Select
           value={filters.type}
-          onValueChange={(value) => handleFilterChange('type', value)}
+          onValueChange={(value) => handleFilterChange("type", value)}
         >
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>
-            {uniqueTypes.map(type => (
+            {uniqueTypes.map((type) => (
               <SelectItem key={type} value={type}>
                 {type}
               </SelectItem>
@@ -101,7 +140,7 @@ const EventFilter = ({ allEvents }: { allEvents: InterfaceEvent[] }) => {
           </SelectContent>
         </Select>
 
-        {/* Reset Button */}
+        {/* Reset Filter */}
         <Button
           variant="outline"
           onClick={handleReset}
@@ -112,14 +151,20 @@ const EventFilter = ({ allEvents }: { allEvents: InterfaceEvent[] }) => {
         </Button>
       </div>
 
-      {/* Event List */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {events.map((event) => (
-          <EventCard key={event.id} event={event} />
-        ))}
-      </div>
+      {/* Events List */}
+      {events.length === 0 ? (
+        <div className="w-full flex items-center justify-center py-12">
+          <NotFound text="No events found" />
+        </div>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {events.map((event) => (
+            <EventCard key={event.id} event={event} />
+          ))}
+        </div>
+      )}
     </>
   );
-}
+};
 
-export default EventFilter
+export default EventFilter;
