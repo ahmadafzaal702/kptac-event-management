@@ -1,3 +1,4 @@
 import NotFound from "./NotFound";
+import Spinner from "./Spinner";
 
-export { NotFound }
+export { NotFound, Spinner }

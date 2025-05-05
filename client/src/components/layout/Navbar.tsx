@@ -1,8 +1,7 @@
 import Link from "next/link";
 
-//Navbar FC component
+//Navbar Component
 const Navbar = () => {
-  // Navbar FC return
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

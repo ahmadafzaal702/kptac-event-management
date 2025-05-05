@@ -1,18 +1,11 @@
-// ui imports
-import { EventCard } from "@/components/events";
-import { NotFound } from "@/components/shared";
-
-// types & utils
+import { EventFilter } from "@/components/events";
 import { getAllEvents } from "@/utils/utils";
+import { API_URL, VALIDATE_DURATION } from '@/utils/constants';
 
-// Home FC
+// Home Page Component
 export default async function Home() {
-  const events = await getAllEvents(
-    "https://68148b33225ff1af16292eee.mockapi.io/api/v1/events",
-    60
-  );
+  const events = await getAllEvents(API_URL, VALIDATE_DURATION);
 
-  // Home FC return
   return (
     <main className="w-full min-h-screen overflow-hidden px-12 py-12">
       <div className="text-center pb-4">
@@ -22,16 +15,10 @@ export default async function Home() {
         </p>
       </div>
 
-      {/* events list */}
-      {Array.isArray(events) && events.length > 0 ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {events.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
-        </div>
-      ) : (
-        <NotFound text="Event Not Found" />
-      )}
+      {/* event filter component */}
+      <EventFilter
+        allEvents={events}
+      />
     </main>
   );
 }
