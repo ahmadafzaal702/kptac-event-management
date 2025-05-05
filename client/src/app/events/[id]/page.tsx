@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
 import { EventTiming, EventStatus, EventImage } from "@/components/events";
 import { InterfaceEvent, EventDetailPageProps } from "@/types/event";
-import { getAllEvents } from "@/utils/utils";
+import { getAllEvents, getEventsById } from "@/utils/utils";
 import { API_URL, VALIDATE_DURATION } from '@/utils/constants';
 
 // Fetch single event by ID
 async function getEvent(id: number): Promise<InterfaceEvent | undefined> {
-  const events = await getAllEvents(API_URL, VALIDATE_DURATION);
+  const events = await getEventsById(API_URL, VALIDATE_DURATION, id);
   return events.find((event) => event.id === id);
 }
 
